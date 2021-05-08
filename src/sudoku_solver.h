@@ -10,7 +10,7 @@
 
 class SudokuSolver {
 public:
-    SudokuSolver();
+    explicit SudokuSolver(Sudoku &sudoku);
 
     Sudoku solve();
 

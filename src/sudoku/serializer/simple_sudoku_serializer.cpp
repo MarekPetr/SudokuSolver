@@ -7,7 +7,7 @@
 
 
 Sudoku SimpleSudokuSerializer::deserialize(const std::string& simpleSudoku) {
-    Sudoku matrix{};
+    Sudoku sudoku{};
     std::string line;
     std::istringstream iss(simpleSudoku);
 
@@ -17,10 +17,10 @@ Sudoku SimpleSudokuSerializer::deserialize(const std::string& simpleSudoku) {
             if (not std::isdigit(c)) {
                 continue;
             }
-            matrix.content[row][col] = int(c);
+            sudoku.content[row][col] = int(c);
         }
     }
-    return matrix;
+    return sudoku;
 }
 
 std::string SimpleSudokuSerializer::serialize(Sudoku sudoku) {

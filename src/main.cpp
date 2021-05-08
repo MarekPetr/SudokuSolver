@@ -4,12 +4,16 @@
 
 #include "sudoku/sudoku.h"
 #include "sudoku_solver.h"
-#include "sudoku/simple_sudoku_serializer.h"
+#include "sudoku/serializer/simple_sudoku_serializer.h"
 
 int main() {
     std::string simpleSudoku = SimpleSudokuSerializer::serialize(Sudoku());
+    Sudoku sudoku = SimpleSudokuSerializer::deserialize(simpleSudoku);
+    simpleSudoku = SimpleSudokuSerializer::serialize(sudoku);
     //Sudoku sudoku{};
-    std::cout << simpleSudoku << std::endl;
+
+    SudokuSolver solver;
+    solver.load("example.ss");
     //sudoku.loads(std::string(matrixSS));
     return 0;
 }

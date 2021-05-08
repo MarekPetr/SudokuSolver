@@ -4,11 +4,13 @@
 
 #include <fstream>
 #include "sudoku_solver.h"
-#include "sudoku/simple_sudoku_serializer.h"
+#include "sudoku/serializer/simple_sudoku_serializer.h"
+#include "file_io/file_io.h"
 
-SudokuSolver::SudokuSolver() {
-    _sudoku = Sudoku();
+SudokuSolver::SudokuSolver(Sudoku &sudoku) {
+    _sudoku = sudoku;
 }
+
 
 void SudokuSolver::dump(const char *filename) {
     std::ofstream ofs(filename, std::ofstream::out);
@@ -23,5 +25,16 @@ std::string SudokuSolver::dumps() {
 void SudokuSolver::loads(const std::string &matrixSS) {
     // TODO
 }
+
+void SudokuSolver::load(const char *filename) {
+    try {
+        std::string sudoku = FileIO::load(filename);
+        std::cout << sudoku << std::endl;
+    }
+    catch (const FileIOException& e) {
+        std::cout << "NOTHING BRO" << std::endl;
+    }
+}
+
 
 
