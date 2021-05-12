@@ -3,17 +3,12 @@
 //
 
 #include "sudoku/sudoku.h"
-#include "sudoku_solver.h"
-#include "sudoku/serializer/simple_sudoku_serializer.h"
+#include "serializer/simple_sudoku_serializer.h"
 
 int main() {
-    std::string simpleSudoku = SimpleSudokuSerializer::serialize(Sudoku());
-    Sudoku sudoku = SimpleSudokuSerializer::deserialize(simpleSudoku);
-    simpleSudoku = SimpleSudokuSerializer::serialize(sudoku);
-    //Sudoku sudoku{};
-
-    SudokuSolver solver;
-    solver.load("example.ss");
-    //sudoku.loads(std::string(matrixSS));
+    Sudoku sudoku = Sudoku();
+    sudoku.load("/home/petr/Dev/SudokuSolver/src/example.ss");
+    std::string dumps = SimpleSudokuSerializer::serialize(sudoku);
+    std::cout << "sudoku:\n" << dumps << std::endl;
     return 0;
 }

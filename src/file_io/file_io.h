@@ -20,7 +20,7 @@ public:
     explicit
     FileIOException(const std::string &msg);
     ~FileIOException() override = default;
-    const char* what() const noexcept override;
+    [[nodiscard]] const char* what() const noexcept override;
 private:
     std::string message;
 };

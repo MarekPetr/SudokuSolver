@@ -7,11 +7,11 @@
 
 
 #include <string>
-#include "../sudoku.h"
+#include "../sudoku/sudoku.h"
 
 class SimpleSudokuSerializer {
 public:
-    [[nodiscard]] static std::string serialize(Sudoku sudoku);
+    [[nodiscard]] static std::string serialize(Sudoku &sudoku);
 
     static Sudoku deserialize(const std::string& simpleSudoku);
 

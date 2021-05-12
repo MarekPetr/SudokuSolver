@@ -7,28 +7,34 @@
 
 
 Sudoku SimpleSudokuSerializer::deserialize(const std::string& simpleSudoku) {
-    Sudoku sudoku{};
+    Sudoku sudoku;
+    Content content;
     std::string line;
     std::istringstream iss(simpleSudoku);
 
-    for (int row = 0; std::getline(iss, line); row++) {
-        for (int col = 0; col < line.size(); col++) {
-            unsigned char c = line[col];
-            if (not std::isdigit(c)) {
-                continue;
+    while(std::getline(iss, line)) {
+        std::vector<int> row_numbers;
+        for (unsigned char c : line) {
+            if (c == '.') {
+                row_numbers.push_back(0);
+            } else if (isdigit(c)){
+                row_numbers.push_back(c - '0');
             }
-            sudoku.content[row][col] = int(c);
+        }
+        if (not row_numbers.empty()) {
+            content.push_back(row_numbers);
         }
     }
+    sudoku.content = content;
     return sudoku;
 }
 
-std::string SimpleSudokuSerializer::serialize(Sudoku sudoku) {
+std::string SimpleSudokuSerializer::serialize(Sudoku &sudoku) {
     std::string stringRepr;
     Content content = sudoku.content;
-    for (int row = 0; row < content.size(); row++) {
-        unsigned long row_size = content[row].size();
-        for (int col = 0; col < row_size; col++) {
+    int side = sudoku.getSide();
+    for (int row = 0; row < side; row++) {
+        for (int col = 0; col < side; col++) {
             std::string cell = _intToString(content[row][col]);
             stringRepr.append(cell);
             if (_isChunkSeparator(col, sudoku)) {

@@ -14,7 +14,6 @@ typedef std::vector<std::vector<int>> Content;
 class Sudoku {
 public:
     std::vector<std::vector<int>> content;
-    int chunkSide{};
 
     Sudoku();
 
@@ -24,8 +23,22 @@ public:
 
     [[nodiscard]] int getChunkSide() const;
 
+    void loads(const std::string &simpleSudoku);
+
+    void load(const char *filename);
+
+    void dump(const char *filename);
+
+    std::string dumps();
+
+    std::string debug_dumps();
+
 private:
     void _init(int chunkSize);
+    int side{};
+    int chunkSide{};
+
+
 };
 
 #endif //SUDOKU_H

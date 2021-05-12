@@ -6,7 +6,7 @@
 #define SUDOKU_SUDOKU_SOLVER_H
 
 
-#include "sudoku/sudoku.h"
+#include "../sudoku/sudoku.h"
 
 class SudokuSolver {
 public:

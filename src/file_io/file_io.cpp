@@ -13,13 +13,14 @@ std::string FileIO::load(const char *filename) {
     if (infile.is_open()) {
         while (getline(infile, line)) {
             result.append(line);
+            result.append("\n");
         }
         infile.close();
     } else {
         std::string error = Formatter() << "Unable to open file: " << filename;
         throw(FileIOException(error));
     }
-    return std::string();
+    return result;
 }
 
 void FileIO::save(std::string &content) {
