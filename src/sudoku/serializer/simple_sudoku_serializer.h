@@ -7,7 +7,7 @@
 
 
 #include <string>
-#include "../sudoku/sudoku.h"
+#include "../sudoku.h"
 
 class SimpleSudokuSerializer {
 public:

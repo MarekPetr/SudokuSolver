@@ -27,11 +27,6 @@ void FileIO::save(std::string &content) {
 
 }
 
-FileIOException::FileIOException(const std::string &msg) {
-
-}
-
-
 const char *FileIOException::what() const noexcept
 {
     return this->message.c_str();

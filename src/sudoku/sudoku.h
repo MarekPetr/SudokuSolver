@@ -23,9 +23,9 @@ public:
 
     [[nodiscard]] int getChunkSide() const;
 
-    void loads(const std::string &simpleSudoku);
-
     void load(const char *filename);
+
+    void loads(const std::string &simpleSudoku);
 
     void dump(const char *filename);
 
@@ -34,9 +34,10 @@ public:
     std::string debug_dumps();
 
 private:
-    void _init(int chunkSize);
-    int side{};
-    int chunkSide{};
+    void _init(int blockSize);
+
+    int _size{};
+    int _blockSize{};
 
 
 };

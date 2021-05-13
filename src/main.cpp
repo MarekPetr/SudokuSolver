@@ -3,12 +3,17 @@
 //
 
 #include "sudoku/sudoku.h"
-#include "serializer/simple_sudoku_serializer.h"
+#include "sudoku/serializer/simple_sudoku_serializer.h"
+#include "file_io/file_io.h"
 
 int main() {
     Sudoku sudoku = Sudoku();
-    sudoku.load("/home/petr/Dev/SudokuSolver/src/example.ss");
-    std::string dumps = SimpleSudokuSerializer::serialize(sudoku);
-    std::cout << "sudoku:\n" << dumps << std::endl;
+    try {
+        sudoku.load("/home/petr/Dev/SudokuSolver/src/example.ss");
+    }
+    catch (const FileIOException& e) {
+        std::cout << "error: " << e.what() << std::endl;
+    }
+    std::cout << sudoku.dumps() << std::endl;
     return 0;
 }

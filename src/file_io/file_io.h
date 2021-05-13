@@ -18,7 +18,9 @@ public:
 class FileIOException : std::exception{
 public:
     explicit
-    FileIOException(const std::string &msg);
+    FileIOException(const std::string &msg) {
+        message = msg;
+    };
     ~FileIOException() override = default;
     [[nodiscard]] const char* what() const noexcept override;
 private:

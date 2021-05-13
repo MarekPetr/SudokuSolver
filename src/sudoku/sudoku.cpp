@@ -2,7 +2,7 @@
 #include <fstream>
 #include "sudoku.h"
 #include "../file_io/file_io.h"
-#include "../serializer/simple_sudoku_serializer.h"
+#include "serializer/simple_sudoku_serializer.h"
 
 Sudoku::Sudoku() {
     _init(3);
@@ -13,24 +13,18 @@ Sudoku::Sudoku(int chunkSize) {
 }
 
 int Sudoku::getSide() const {
-    return side;
+    return _size;
 }
 
 int Sudoku::getChunkSide() const {
-    return chunkSide;
+    return _blockSize;
 }
 
-void Sudoku::_init(int chunkSize) {
-    chunkSide = chunkSize;
-    side = chunkSide * chunkSide;
-    std::vector<int> row_vector(side, 0);
-    content.assign(side, row_vector);
-}
-
-void Sudoku::dump(const char *filename) {
-    std::ofstream ofs(filename, std::ofstream::out);
-    ofs << dumps();
-    ofs.close();
+void Sudoku::_init(int blockSize) {
+    _blockSize = blockSize;
+    _size = _blockSize * _blockSize;
+    std::vector<int> row_vector(_size, 0);
+    content.assign(_size, row_vector);
 }
 
 std::string Sudoku::debug_dumps() {
@@ -44,20 +38,21 @@ std::string Sudoku::debug_dumps() {
     return dump;
 }
 
+void Sudoku::dump(const char *filename) {
+    std::ofstream ofs(filename, std::ofstream::out);
+    ofs << dumps();
+    ofs.close();
+}
+
 std::string Sudoku::dumps() {
     return SimpleSudokuSerializer::serialize(*this);
 }
 
-void Sudoku::loads(const std::string &simpleSudoku) {
-    // TODO
+void Sudoku::load(const char *filename) {
+    std::string simpleSudoku = FileIO::load(filename);
+    loads(simpleSudoku);
 }
 
-void Sudoku::load(const char *filename) {
-    try {
-        std::string simple_sudoku = FileIO::load(filename);
-        *this = SimpleSudokuSerializer::deserialize(simple_sudoku);
-    }
-    catch (const FileIOException& e) {
-        std::cout << "NOTHING BRO" << std::endl;
-    }
+void Sudoku::loads(const std::string &simpleSudoku) {
+    *this = SimpleSudokuSerializer::deserialize(simpleSudoku);
 }
