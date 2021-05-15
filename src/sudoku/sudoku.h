@@ -19,9 +19,9 @@ public:
 
     explicit Sudoku(int chunkSize);
 
-    [[nodiscard]] int getSide() const;
+    [[nodiscard]] int getSize() const;
 
-    [[nodiscard]] int getChunkSide() const;
+    [[nodiscard]] int getBoxSize() const;
 
     void load(const char *filename);
 
@@ -37,7 +37,7 @@ private:
     void _init(int blockSize);
 
     int _size{};
-    int _blockSize{};
+    int _boxSize{};
 
 
 };

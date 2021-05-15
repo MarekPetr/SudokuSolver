@@ -10,22 +10,24 @@
 
 class SudokuSolver {
 public:
-    explicit SudokuSolver(Sudoku &sudoku);
+    explicit SudokuSolver() = default;;
 
-    Sudoku solve();
+    Sudoku solve(Sudoku &sudoku);
 
     Sudoku generate();
 
-    void load(const char *filename);
-
-    void loads(const std::string& matrixSS);
-
-    void dump(const char *filename);
-
-    std::string dumps();
-
 private:
     Sudoku _sudoku;
+
+    bool _solveUtil(int rowIndex);
+
+    int _getNextSafeNumber(int rowIndex, int columnIndex);
+
+    bool _isPresentInRow(int number, int row);
+
+    bool _isPresentInColumn(int number, int columnIndex);
+
+    bool _isPresentInBox(int number, int rowIndex, int columnIndex);
 };
 
 

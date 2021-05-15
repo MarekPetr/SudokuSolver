@@ -3,17 +3,24 @@
 //
 
 #include "sudoku/sudoku.h"
-#include "sudoku/serializer/simple_sudoku_serializer.h"
 #include "file_io/file_io.h"
+#include "solver/sudoku_solver.h"
 
-int main() {
-    Sudoku sudoku = Sudoku();
+void load(Sudoku &sudoku, const char* filename) {
     try {
-        sudoku.load("/home/petr/Dev/SudokuSolver/src/example.ss");
+        sudoku.load(filename);
     }
     catch (const FileIOException& e) {
         std::cout << "error: " << e.what() << std::endl;
     }
-    std::cout << sudoku.dumps() << std::endl;
+}
+
+int main() {
+    Sudoku sudoku{};
+    load(sudoku, "/home/petr/Dev/SudokuSolver/src/example.ss");
+    SudokuSolver solver{};
+    Sudoku solved = solver.solve(sudoku);
+    std::cout << solved.dumps() << std::endl;
     return 0;
 }
+

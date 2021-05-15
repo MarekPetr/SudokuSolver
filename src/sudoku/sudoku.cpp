@@ -12,17 +12,17 @@ Sudoku::Sudoku(int chunkSize) {
     _init(chunkSize);
 }
 
-int Sudoku::getSide() const {
+int Sudoku::getSize() const {
     return _size;
 }
 
-int Sudoku::getChunkSide() const {
-    return _blockSize;
+int Sudoku::getBoxSize() const {
+    return _boxSize;
 }
 
 void Sudoku::_init(int blockSize) {
-    _blockSize = blockSize;
-    _size = _blockSize * _blockSize;
+    _boxSize = blockSize;
+    _size = _boxSize * _boxSize;
     std::vector<int> row_vector(_size, 0);
     content.assign(_size, row_vector);
 }
