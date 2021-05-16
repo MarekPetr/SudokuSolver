@@ -22,13 +22,3 @@ std::string FileIO::load(const char *filename) {
     }
     return result;
 }
-
-void FileIO::save(std::string &content) {
-
-}
-
-const char *FileIOException::what() const noexcept
-{
-    return this->message.c_str();
-}
-

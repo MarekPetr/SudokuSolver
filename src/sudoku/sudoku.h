@@ -7,15 +7,12 @@
 
 #include <iostream>
 #include <vector>
+#define EMPTY 0
 
-struct Cell {
-    int number = 0;
-    bool isLocked = false;
-};
+typedef std::vector<int> Row;
+typedef std::vector<Row> Grid;
 
-typedef std::vector<std::vector<Cell>> Grid;
-
-struct Coordinates {
+struct Location {
     int rowIndex;
     int columnIndex;
 };
@@ -42,7 +39,10 @@ public:
 
     std::string debug_dumps();
 
-    [[nodiscard]] Coordinates getBoxCoordinatesOfCell(Coordinates cellCoordinates);
+
+    [[nodiscard]] Location getBoxLocationOfCell(Location cellLocation);
+
+    [[nodiscard]] Location getFirstEmptyLocation() const;
 
 private:
     int _size{};
@@ -50,9 +50,10 @@ private:
 
     void _init(int boxSize);
 
-    [[nodiscard]] Coordinates _getBoxCoordinatesOfCell(Coordinates cellCoordinates) const;
+    [[nodiscard]] Location _getFirstCellCoordinatesOfBox(Location boxCoordinates) const;
 
-    [[nodiscard]] Coordinates _getFirstCellCoordinatesOfBox(Coordinates boxCoordinates) const;
+    [[nodiscard]] Location _getBoxIndexLocationOfCell(Location cellLocation) const;
+
 };
 
 #endif //SUDOKU_H

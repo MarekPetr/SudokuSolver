@@ -4,44 +4,35 @@
 
 #include "sudoku_solver.h"
 
-#include <utility>
-
-Sudoku SudokuSolver::solve(Sudoku &sudoku) {
+bool SudokuSolver::solve(Sudoku *sudoku) {
     _sudoku = sudoku;
-    bool solved = _solveUtil(0);
-    return _sudoku;
-}
-
-bool SudokuSolver::_solveUtil(int rowIndex) {
-    auto row = _sudoku.grid[rowIndex];
-    if (rowIndex >= _sudoku.getSize()) {
-        return false;
+    Location location{};
+    try {
+        location = _sudoku->getFirstEmptyLocation();
+    } catch (std::out_of_range &err) {
+        return true;
     }
-    for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-        Cell cell = row[columnIndex];
-        if (cell.isLocked) { continue; }
-        if (cell.number != 0) { continue; }
-        int safeNumber = _getNextSafeNumber(Coordinates{rowIndex, columnIndex});
-        _sudoku.grid[rowIndex][columnIndex].number = safeNumber;
+    for (int number = 1; number <= 9; number++) {
+        if (not _isNumberSafe(number, location)) {
+            continue;
+        }
+        int *currentNumber = &_sudoku->grid[location.rowIndex][location.columnIndex];
+        *currentNumber = number;
+        if (solve(_sudoku)) {
+            return true;
+        }
+        *currentNumber = EMPTY;
     }
-    std::cout << std::endl;
     return false;
 }
 
-int SudokuSolver::_getNextSafeNumber(Coordinates coords) {
-    int rowIndex = coords.rowIndex;
-    int columnIndex = coords.columnIndex;
-    auto row = _sudoku.grid[rowIndex];
-    int nextNumber = row[columnIndex].number++;
-    for (int number = nextNumber; number <= _sudoku.getSize(); number++) {
-        if (_isNumberSafe(number, coords)) {
-            return number;
-        }
-    }
-    return 0;
+Sudoku SudokuSolver::generate() {
+    Sudoku sudoku = Sudoku{};
+    solve(&sudoku);
+    return sudoku;
 }
 
-bool SudokuSolver::_isNumberSafe(int number, Coordinates coords) {
+bool SudokuSolver::_isNumberSafe(int number, Location coords) {
     if (_isNumberInRow(number, coords.rowIndex) ||
         _isNumberInColumn(number, coords.columnIndex) ||
         _isNumberInBox(number, coords)) {
@@ -59,12 +50,12 @@ bool SudokuSolver::_isNumberInColumn(int number, int columnIndex) {
 }
 
 bool SudokuSolver::_isNumberInRowOrColumn(int number, int index, bool isIndexOfRow) {
-    for (int i = 0; i < _sudoku.getSize(); i++) {
+    for (int i = 0; i < _sudoku->getSize(); i++) {
         int currentNumber;
         if (isIndexOfRow) {
-            currentNumber = _sudoku.grid[index][i].number;
+            currentNumber = _sudoku->grid[index][i];
         } else {
-            currentNumber = _sudoku.grid[i][index].number;
+            currentNumber = _sudoku->grid[i][index];
         }
         if (number == currentNumber) {
             return true;
@@ -73,14 +64,14 @@ bool SudokuSolver::_isNumberInRowOrColumn(int number, int index, bool isIndexOfR
     return false;
 }
 
-bool SudokuSolver::_isNumberInBox(int number, Coordinates coordinates) {
-    Coordinates firstCoordsOfBox = _sudoku.getBoxCoordinatesOfCell(coordinates);
-    int lastBoxRow = firstCoordsOfBox.rowIndex + _sudoku.getBoxSize();
-    int lastBoxColumn = firstCoordsOfBox.columnIndex + _sudoku.getBoxSize();
+bool SudokuSolver::_isNumberInBox(int number, Location coordinates) {
+    Location firstCoordsOfBox = _sudoku->getBoxLocationOfCell(coordinates);
+    int lastBoxRow = firstCoordsOfBox.rowIndex + _sudoku->getBoxSize();
+    int lastBoxColumn = firstCoordsOfBox.columnIndex + _sudoku->getBoxSize();
 
     for (int rowIdx = firstCoordsOfBox.rowIndex; rowIdx < lastBoxRow; rowIdx++) {
         for (int colIdx = firstCoordsOfBox.columnIndex; colIdx < lastBoxColumn; colIdx++) {
-            int currentNumber = _sudoku.grid[rowIdx][colIdx].number;
+            int currentNumber = _sudoku->grid[rowIdx][colIdx];
             if (currentNumber == number) {
                 return true;
             }

@@ -11,20 +11,22 @@
 class FileIO {
 public:
     static std::string load(const char *filename);
-
-    static void save(std::string &content);
 };
 
-class FileIOException : std::exception{
+class FileIOException : std::exception {
 public:
     explicit
     FileIOException(const std::string &msg) {
-        message = msg;
+        _message = msg;
     };
+
     ~FileIOException() override = default;
-    [[nodiscard]] const char* what() const noexcept override;
+
+    [[nodiscard]] const char *what() const noexcept override {
+        return this->_message.c_str();
+    };
 private:
-    std::string message;
+    std::string _message;
 };
 
 

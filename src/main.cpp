@@ -19,8 +19,13 @@ int main() {
     Sudoku sudoku{};
     load(sudoku, "/home/petr/Dev/SudokuSolver/src/example.ss");
     SudokuSolver solver{};
-    Sudoku solved = solver.solve(sudoku);
-    std::cout << solved.dumps() << std::endl;
+    bool solved = solver.solve(&sudoku);
+    if (solved) {
+        std::cout << "SOLVED" << std::endl;
+    } else {
+        std::cout << "NOT SOLVED" << std::endl;
+    }
+    std::cout << sudoku.dumps() << std::endl;
     return 0;
 }
 

@@ -13,12 +13,12 @@ Sudoku SimpleSudokuSerializer::deserialize(const std::string& simpleSudoku) {
     std::istringstream sudokuStringStream(simpleSudoku);
 
     while(std::getline(sudokuStringStream, line)) {
-        std::vector<Cell> rowOfCells;
+        std::vector<int> rowOfCells;
         for (unsigned char c : line) {
             if (c == '.') {
-                rowOfCells.push_back(Cell{0, false});
+                rowOfCells.push_back(EMPTY);
             } else if (isdigit(c)){
-                rowOfCells.push_back(Cell{_getNumberFromCharacter(c), true});
+                rowOfCells.push_back(_getNumberFromCharacter(c));
             }
         }
         if (not rowOfCells.empty()) {
@@ -35,7 +35,7 @@ std::string SimpleSudokuSerializer::serialize(const Sudoku& sudoku) {
     int size = sudoku.getSize();
     for (int row = 0; row < size; row++) {
         for (int col = 0; col < size; col++) {
-            std::string cell = _intToString(grid[row][col].number);
+            std::string cell = _intToString(grid[row][col]);
             stringRepr.append(cell);
             if (_isChunkSeparator(col, sudoku)) {
                 stringRepr.append("|");

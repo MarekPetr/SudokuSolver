@@ -3,6 +3,7 @@
 #include "sudoku.h"
 #include "../file_io/file_io.h"
 #include "serializer/simple_sudoku_serializer.h"
+#include "../utils.h"
 
 Sudoku::Sudoku() {
     _init(3);
@@ -39,29 +40,43 @@ void Sudoku::loads(const std::string &simpleSudoku) {
     *this = SimpleSudokuSerializer::deserialize(simpleSudoku);
 }
 
-Coordinates Sudoku::getBoxCoordinatesOfCell(Coordinates cellCoordinates) {
-    Coordinates boxCoords = _getBoxCoordinatesOfCell(cellCoordinates);
-    Coordinates coords = _getFirstCellCoordinatesOfBox(boxCoords);
+Location Sudoku::getFirstEmptyLocation() const {
+    int row;
+    int col;
+    for (row = 0; row < _size; row++) {
+        for (col = 0; col < _size; col++) {
+            if (grid[row][col] == EMPTY) {
+                return Location{row, col};
+            }
+        }
+    }
+    std::string err = "No empty location found!";
+    throw std::out_of_range(err);
+}
+
+Location Sudoku::getBoxLocationOfCell(Location cellLocation) {
+    Location boxLocation{_getBoxIndexLocationOfCell(cellLocation)};
+    Location coords = _getFirstCellCoordinatesOfBox(boxLocation);
     return coords;
 }
 
-Coordinates Sudoku::_getBoxCoordinatesOfCell(Coordinates cellCoordinates) const {
-    int boxRowIndex = cellCoordinates.rowIndex / _boxSize;
-    int boxColumnIndex = cellCoordinates.columnIndex / _boxSize;
-    return Coordinates{boxRowIndex, boxColumnIndex};
+Location Sudoku::_getBoxIndexLocationOfCell(Location cellLocation) const {
+    int boxRowIndex = cellLocation.rowIndex / _boxSize;
+    int boxColumnIndex = cellLocation.columnIndex / _boxSize;
+    return Location{boxRowIndex, boxColumnIndex};
 }
 
-Coordinates Sudoku::_getFirstCellCoordinatesOfBox(Coordinates boxCoordinates) const {
+Location Sudoku::_getFirstCellCoordinatesOfBox(Location boxCoordinates) const {
     int rowIndex = boxCoordinates.rowIndex * _boxSize;
     int columnIndex = boxCoordinates.columnIndex * _boxSize;
-    return Coordinates{rowIndex, columnIndex};
+    return Location{rowIndex, columnIndex};
 }
 
 std::string Sudoku::debug_dumps() {
     std::string dump;
     for (auto &row: grid) {
-        for (Cell &cell: row) {
-            dump.append(std::to_string(cell.number));
+        for (int &number: row) {
+            dump.append(std::to_string(number));
         }
         dump.push_back('\n');
     }
@@ -71,7 +86,7 @@ std::string Sudoku::debug_dumps() {
 void Sudoku::_init(int boxSize) {
     _boxSize = boxSize;
     _size = _boxSize * _boxSize;
-    std::vector<Cell> row_vector(_size, Cell{0, false});
+    Row row_vector(_size, EMPTY);
     grid.assign(_size, row_vector);
 }
 
