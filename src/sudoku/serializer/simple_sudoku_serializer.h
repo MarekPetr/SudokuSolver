@@ -11,16 +11,18 @@
 
 class SimpleSudokuSerializer {
 public:
-    [[nodiscard]] static std::string serialize(Sudoku &sudoku);
+    [[nodiscard]] static std::string serialize(const Sudoku& sudoku);
 
     static Sudoku deserialize(const std::string& simpleSudoku);
 
 private:
-    [[nodiscard]] static bool _isChunkSeparator(int charIdx, Sudoku &sudoku);
+    [[nodiscard]] static bool _isChunkSeparator(int charIdx, const Sudoku& sudoku);
 
-    static void _appendUnderscore(std::string &simpleSudoku, Sudoku &sudoku);
+    static void _appendUnderscore(std::string &simpleSudoku, const Sudoku &sudoku);
 
     static std::string _intToString(int c);
+
+    static int _getNumberFromCharacter(unsigned char character);
 };
 
 

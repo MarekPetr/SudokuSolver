@@ -21,13 +21,17 @@ private:
 
     bool _solveUtil(int rowIndex);
 
-    int _getNextSafeNumber(int rowIndex, int columnIndex);
+    int _getNextSafeNumber(Coordinates coords);
 
-    bool _isPresentInRow(int number, int row);
+    bool _isNumberInRow(int number, int row);
 
-    bool _isPresentInColumn(int number, int columnIndex);
+    bool _isNumberInColumn(int number, int columnIndex);
 
-    bool _isPresentInBox(int number, int rowIndex, int columnIndex);
+    bool _isNumberInBox(int number, Coordinates coordinates);
+
+    bool _isNumberInRowOrColumn(int number, int index, bool isIndexOfRow);
+
+    bool _isNumberSafe(int number, Coordinates coords);
 };
 
 

@@ -20,24 +20,6 @@ int Sudoku::getBoxSize() const {
     return _boxSize;
 }
 
-void Sudoku::_init(int blockSize) {
-    _boxSize = blockSize;
-    _size = _boxSize * _boxSize;
-    std::vector<int> row_vector(_size, 0);
-    content.assign(_size, row_vector);
-}
-
-std::string Sudoku::debug_dumps() {
-    std::string dump;
-    for (auto& row: content) {
-        for (auto& item: row) {
-            dump.append(std::to_string(item));
-        }
-        dump.push_back('\n');
-    }
-    return dump;
-}
-
 void Sudoku::dump(const char *filename) {
     std::ofstream ofs(filename, std::ofstream::out);
     ofs << dumps();
@@ -56,3 +38,42 @@ void Sudoku::load(const char *filename) {
 void Sudoku::loads(const std::string &simpleSudoku) {
     *this = SimpleSudokuSerializer::deserialize(simpleSudoku);
 }
+
+Coordinates Sudoku::getBoxCoordinatesOfCell(Coordinates cellCoordinates) {
+    Coordinates boxCoords = _getBoxCoordinatesOfCell(cellCoordinates);
+    Coordinates coords = _getFirstCellCoordinatesOfBox(boxCoords);
+    return coords;
+}
+
+Coordinates Sudoku::_getBoxCoordinatesOfCell(Coordinates cellCoordinates) const {
+    int boxRowIndex = cellCoordinates.rowIndex / _boxSize;
+    int boxColumnIndex = cellCoordinates.columnIndex / _boxSize;
+    return Coordinates{boxRowIndex, boxColumnIndex};
+}
+
+Coordinates Sudoku::_getFirstCellCoordinatesOfBox(Coordinates boxCoordinates) const {
+    int rowIndex = boxCoordinates.rowIndex * _boxSize;
+    int columnIndex = boxCoordinates.columnIndex * _boxSize;
+    return Coordinates{rowIndex, columnIndex};
+}
+
+std::string Sudoku::debug_dumps() {
+    std::string dump;
+    for (auto &row: grid) {
+        for (Cell &cell: row) {
+            dump.append(std::to_string(cell.number));
+        }
+        dump.push_back('\n');
+    }
+    return dump;
+}
+
+void Sudoku::_init(int boxSize) {
+    _boxSize = boxSize;
+    _size = _boxSize * _boxSize;
+    std::vector<Cell> row_vector(_size, Cell{0, false});
+    grid.assign(_size, row_vector);
+}
+
+
+

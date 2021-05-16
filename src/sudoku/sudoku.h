@@ -6,14 +6,23 @@
 #define SUDOKU_H
 
 #include <iostream>
-
 #include <vector>
 
-typedef std::vector<std::vector<int>> Content;
+struct Cell {
+    int number = 0;
+    bool isLocked = false;
+};
+
+typedef std::vector<std::vector<Cell>> Grid;
+
+struct Coordinates {
+    int rowIndex;
+    int columnIndex;
+};
 
 class Sudoku {
 public:
-    std::vector<std::vector<int>> content;
+    Grid grid;
 
     Sudoku();
 
@@ -33,13 +42,17 @@ public:
 
     std::string debug_dumps();
 
-private:
-    void _init(int blockSize);
+    [[nodiscard]] Coordinates getBoxCoordinatesOfCell(Coordinates cellCoordinates);
 
+private:
     int _size{};
     int _boxSize{};
 
+    void _init(int boxSize);
 
+    [[nodiscard]] Coordinates _getBoxCoordinatesOfCell(Coordinates cellCoordinates) const;
+
+    [[nodiscard]] Coordinates _getFirstCellCoordinatesOfBox(Coordinates boxCoordinates) const;
 };
 
 #endif //SUDOKU_H

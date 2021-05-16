@@ -3,7 +3,8 @@
 //
 
 #include "sudoku_solver.h"
-#include <algorithm>
+
+#include <utility>
 
 Sudoku SudokuSolver::solve(Sudoku &sudoku) {
     _sudoku = sudoku;
@@ -12,41 +13,59 @@ Sudoku SudokuSolver::solve(Sudoku &sudoku) {
 }
 
 bool SudokuSolver::_solveUtil(int rowIndex) {
-    auto row = _sudoku.content[rowIndex];
+    auto row = _sudoku.grid[rowIndex];
     if (rowIndex >= _sudoku.getSize()) {
         return false;
     }
     for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-        int number = row[columnIndex];
-        if (number != 0) { continue; }
-        int safeNumber = _getNextSafeNumber(rowIndex, columnIndex);
-        std::cout << safeNumber << " ";
-        _sudoku.content[rowIndex][columnIndex] = safeNumber;
+        Cell cell = row[columnIndex];
+        if (cell.isLocked) { continue; }
+        if (cell.number != 0) { continue; }
+        int safeNumber = _getNextSafeNumber(Coordinates{rowIndex, columnIndex});
+        _sudoku.grid[rowIndex][columnIndex].number = safeNumber;
     }
     std::cout << std::endl;
     return false;
 }
 
-int SudokuSolver::_getNextSafeNumber(int rowIndex, int columnIndex) {
-    auto row = _sudoku.content[rowIndex];
-    int nextCandidate = row[columnIndex]++;
-    for (int candidate = nextCandidate; candidate <= _sudoku.getSize(); candidate++) {
-        if (_isPresentInRow(candidate, rowIndex)) { continue; }
-        if (_isPresentInColumn(candidate, columnIndex)) { continue; }
-        return candidate;
+int SudokuSolver::_getNextSafeNumber(Coordinates coords) {
+    int rowIndex = coords.rowIndex;
+    int columnIndex = coords.columnIndex;
+    auto row = _sudoku.grid[rowIndex];
+    int nextNumber = row[columnIndex].number++;
+    for (int number = nextNumber; number <= _sudoku.getSize(); number++) {
+        if (_isNumberSafe(number, coords)) {
+            return number;
+        }
     }
     return 0;
 }
 
-bool SudokuSolver::_isPresentInRow(int number, int rowIndex) {
-    auto row = _sudoku.content[rowIndex];
-    bool isPresent = std::find(row.begin(), row.end(), number) != row.end();
-    return isPresent;
+bool SudokuSolver::_isNumberSafe(int number, Coordinates coords) {
+    if (_isNumberInRow(number, coords.rowIndex) ||
+        _isNumberInColumn(number, coords.columnIndex) ||
+        _isNumberInBox(number, coords)) {
+        return false;
+    }
+    return true;
 }
 
-bool SudokuSolver::_isPresentInColumn(int number, int columnIndex) {
-    for (int rowIndex = 0; rowIndex < _sudoku.getSize(); rowIndex++) {
-        int currentNumber = _sudoku.content[rowIndex][columnIndex];
+bool SudokuSolver::_isNumberInRow(int number, int rowIndex) {
+    return _isNumberInRowOrColumn(number, rowIndex, true);
+}
+
+bool SudokuSolver::_isNumberInColumn(int number, int columnIndex) {
+    return _isNumberInRowOrColumn(number, columnIndex, false);
+}
+
+bool SudokuSolver::_isNumberInRowOrColumn(int number, int index, bool isIndexOfRow) {
+    for (int i = 0; i < _sudoku.getSize(); i++) {
+        int currentNumber;
+        if (isIndexOfRow) {
+            currentNumber = _sudoku.grid[index][i].number;
+        } else {
+            currentNumber = _sudoku.grid[i][index].number;
+        }
         if (number == currentNumber) {
             return true;
         }
@@ -54,9 +73,19 @@ bool SudokuSolver::_isPresentInColumn(int number, int columnIndex) {
     return false;
 }
 
-bool SudokuSolver::_isPresentInBox(int number, int rowIndex, int columnIndex) {
-    int boxSize = _sudoku.getBoxSize();
-    // TODO implement
+bool SudokuSolver::_isNumberInBox(int number, Coordinates coordinates) {
+    Coordinates firstCoordsOfBox = _sudoku.getBoxCoordinatesOfCell(coordinates);
+    int lastBoxRow = firstCoordsOfBox.rowIndex + _sudoku.getBoxSize();
+    int lastBoxColumn = firstCoordsOfBox.columnIndex + _sudoku.getBoxSize();
+
+    for (int rowIdx = firstCoordsOfBox.rowIndex; rowIdx < lastBoxRow; rowIdx++) {
+        for (int colIdx = firstCoordsOfBox.columnIndex; colIdx < lastBoxColumn; colIdx++) {
+            int currentNumber = _sudoku.grid[rowIdx][colIdx].number;
+            if (currentNumber == number) {
+                return true;
+            }
+        }
+    }
     return false;
 }
 

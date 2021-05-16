@@ -8,34 +8,34 @@
 
 Sudoku SimpleSudokuSerializer::deserialize(const std::string& simpleSudoku) {
     Sudoku sudoku;
-    Content content;
+    Grid grid;
     std::string line;
-    std::istringstream iss(simpleSudoku);
+    std::istringstream sudokuStringStream(simpleSudoku);
 
-    while(std::getline(iss, line)) {
-        std::vector<int> row_numbers;
+    while(std::getline(sudokuStringStream, line)) {
+        std::vector<Cell> rowOfCells;
         for (unsigned char c : line) {
             if (c == '.') {
-                row_numbers.push_back(0);
+                rowOfCells.push_back(Cell{0, false});
             } else if (isdigit(c)){
-                row_numbers.push_back(c - '0');
+                rowOfCells.push_back(Cell{_getNumberFromCharacter(c), true});
             }
         }
-        if (not row_numbers.empty()) {
-            content.push_back(row_numbers);
+        if (not rowOfCells.empty()) {
+            grid.push_back(rowOfCells);
         }
     }
-    sudoku.content = content;
+    sudoku.grid = grid;
     return sudoku;
 }
 
-std::string SimpleSudokuSerializer::serialize(Sudoku &sudoku) {
+std::string SimpleSudokuSerializer::serialize(const Sudoku& sudoku) {
     std::string stringRepr;
-    Content content = sudoku.content;
+    Grid grid = sudoku.grid;
     int size = sudoku.getSize();
     for (int row = 0; row < size; row++) {
         for (int col = 0; col < size; col++) {
-            std::string cell = _intToString(content[row][col]);
+            std::string cell = _intToString(grid[row][col].number);
             stringRepr.append(cell);
             if (_isChunkSeparator(col, sudoku)) {
                 stringRepr.append("|");
@@ -50,7 +50,11 @@ std::string SimpleSudokuSerializer::serialize(Sudoku &sudoku) {
     return stringRepr;
 }
 
-bool SimpleSudokuSerializer::_isChunkSeparator(int charIdx, Sudoku &sudoku) {
+int SimpleSudokuSerializer::_getNumberFromCharacter(unsigned char character) {
+    return character - '0';
+}
+
+bool SimpleSudokuSerializer::_isChunkSeparator(int charIdx, const Sudoku& sudoku) {
     int char_order = charIdx + 1;
     if (char_order == sudoku.getSize()) {
         return false;
@@ -66,7 +70,7 @@ std::string SimpleSudokuSerializer::_intToString(int c) {
     }
 }
 
-void SimpleSudokuSerializer::_appendUnderscore(std::string &simpleSudoku, Sudoku &sudoku) {
+void SimpleSudokuSerializer::_appendUnderscore(std::string &simpleSudoku, const Sudoku &sudoku) {
     unsigned long charsPerRow = sudoku.getSize() + sudoku.getBoxSize() - 1;
     for (int i = 0; i < charsPerRow; i++) {
         simpleSudoku.append("-");
